@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model perguntas {
+  ID                Int                 @id
+  Perguntas         String?             @db.Text
+  Ativo             Boolean?            @default(true)
+  quiz_pergunta     quiz_pergunta[]
+  respostas         respostas[]
+  usuario_respostas usuario_respostas[]
+}
+
+model quiz {
+  ID                Int                 @id
+  Nome              String?             @db.Text
+  Ativo             Boolean?            @default(true)
+  quiz_pergunta     quiz_pergunta[]
+  usuario_respostas usuario_respostas[]
+}
+
+model quiz_pergunta {
+  ID          Int       @id
+  PerguntasID Int
+  QuizID      Int
+  Ativo       Boolean
+  perguntas   perguntas @relation(fields: [PerguntasID], references: [ID], onUpdate: Restrict, map: "quiz_pergunta_ibfk_1")
+  quiz        quiz      @relation(fields: [QuizID], references: [ID], onUpdate: Restrict, map: "quiz_pergunta_ibfk_2")
+
+  @@index([PerguntasID], map: "PerguntasID")
+  @@index([QuizID], map: "QuizID")
+}
+
+model respostas {
+  ID                Int                 @id
+  Respostas         String?             @db.Text
+  PerguntasID       Int
+  Correto           Boolean?            @default(false)
+  Ativo             Boolean?            @default(true)
+  perguntas         perguntas           @relation(fields: [PerguntasID], references: [ID], onUpdate: Restrict, map: "respostas_ibfk_1")
+  usuario_respostas usuario_respostas[]
+
+  @@index([PerguntasID], map: "PerguntasID")
+}
+
+model usuario_respostas {
+  ID          Int       @id
+  UsuariosID  Int
+  QuizID      Int
+  PerguntasID Int
+  RespostasID Int
+  Ativo       Boolean?  @default(true)
+  usuarios    usuarios  @relation(fields: [UsuariosID], references: [ID], onUpdate: Restrict, map: "usuario_respostas_ibfk_1")
+  quiz        quiz      @relation(fields: [QuizID], references: [ID], onUpdate: Restrict, map: "usuario_respostas_ibfk_2")
+  perguntas   perguntas @relation(fields: [PerguntasID], references: [ID], onUpdate: Restrict, map: "usuario_respostas_ibfk_3")
+  respostas   respostas @relation(fields: [RespostasID], references: [ID], onUpdate: Restrict, map: "usuario_respostas_ibfk_4")
+
+  @@index([PerguntasID], map: "PerguntasID")
+  @@index([QuizID], map: "QuizID")
+  @@index([RespostasID], map: "RespostasID")
+  @@index([UsuariosID], map: "UsuariosID")
+}
+
+model usuarios {
+  ID                Int                 @id
+  Nome              String              @db.VarChar(100)
+  Email             String              @db.VarChar(100)
+  Senha             String              @db.VarChar(255)
+  Ativo             Boolean?            @default(true)
+  usuario_respostas usuario_respostas[]
+}
