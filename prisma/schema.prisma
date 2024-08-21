@@ -8,7 +8,7 @@ datasource db {
 }
 
 model perguntas {
-  ID                Int                 @id
+  ID                Int                 @id @unique(map: "ID_UNIQUE") @default(autoincrement())
   Perguntas         String?             @db.Text
   Ativo             Boolean?            @default(true)
   quiz_pergunta     quiz_pergunta[]
@@ -67,9 +67,9 @@ model usuario_respostas {
 }
 
 model usuarios {
-  ID                Int                 @id
+  ID                Int                 @id @default(autoincrement())
   Nome              String              @db.VarChar(100)
-  Email             String              @db.VarChar(100)
+  Email             String              @unique(map: "Email_UNIQUE") @db.VarChar(100)
   Senha             String              @db.VarChar(255)
   Ativo             Boolean?            @default(true)
   usuario_respostas usuario_respostas[]
