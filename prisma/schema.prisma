@@ -14,7 +14,7 @@ model perguntas {
   quiz_pergunta     quiz_pergunta[]
   respostas         respostas[]
   usuario_respostas usuario_respostas[]
-}
+} 
 
 model quiz {
   ID                Int                 @id
