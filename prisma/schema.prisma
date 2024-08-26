@@ -8,7 +8,7 @@ datasource db {
 }
 
 model perguntas {
-  ID                Int                 @id
+  ID                Int                 @id @unique(map: "ID_UNIQUE") @default(autoincrement())
   Perguntas         String?             @db.Text
   Ativo             Boolean?            @default(true)
   quiz_pergunta     quiz_pergunta[]
@@ -17,18 +17,18 @@ model perguntas {
 }
 
 model quiz {
-  ID                Int                 @id
-  Nome              String?             @db.Text
+  ID                Int                 @id @unique(map: "ID_UNIQUE") @default(autoincrement())
+  Nome              String?             @unique(map: "Nome_UNIQUE") @db.VarChar(255)
   Ativo             Boolean?            @default(true)
   quiz_pergunta     quiz_pergunta[]
   usuario_respostas usuario_respostas[]
 }
 
 model quiz_pergunta {
-  ID          Int       @id
+  ID          Int       @id @unique(map: "ID_UNIQUE") @default(autoincrement())
   PerguntasID Int
   QuizID      Int
-  Ativo       Boolean
+  Ativo       Boolean   @default(true)
   perguntas   perguntas @relation(fields: [PerguntasID], references: [ID], onUpdate: Restrict, map: "quiz_pergunta_ibfk_1")
   quiz        quiz      @relation(fields: [QuizID], references: [ID], onUpdate: Restrict, map: "quiz_pergunta_ibfk_2")
 
@@ -37,7 +37,7 @@ model quiz_pergunta {
 }
 
 model respostas {
-  ID                Int                 @id
+  ID                Int                 @id @unique(map: "ID_UNIQUE") @default(autoincrement())
   Respostas         String?             @db.Text
   PerguntasID       Int
   Correto           Boolean?            @default(false)
@@ -67,9 +67,9 @@ model usuario_respostas {
 }
 
 model usuarios {
-  ID                Int                 @id
+  ID                Int                 @id @default(autoincrement())
   Nome              String              @db.VarChar(100)
-  Email             String              @db.VarChar(100)
+  Email             String              @unique(map: "Email_UNIQUE") @db.VarChar(100)
   Senha             String              @db.VarChar(255)
   Ativo             Boolean?            @default(true)
   usuario_respostas usuario_respostas[]
